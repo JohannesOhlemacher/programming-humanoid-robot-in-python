@@ -11,7 +11,6 @@ In this exercise you need to know how to get sensor data.
 import os
 import sys
 sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', 'software_installation'))
-
 from spark_agent import SparkAgent
 
 

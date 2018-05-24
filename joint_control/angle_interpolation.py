@@ -32,6 +32,8 @@ class AngleInterpolationAgent(PIDAgent):
                  sync_mode=True):
         super(AngleInterpolationAgent, self).__init__(simspark_ip, simspark_port, teamname, player_id, sync_mode)
         self.keyframes = ([], [], [])
+        self.starting_time = self.perception.time
+
 
     def think(self, perception):
         target_joints = self.angle_interpolation(self.keyframes, perception)
@@ -40,9 +42,47 @@ class AngleInterpolationAgent(PIDAgent):
 
     def angle_interpolation(self, keyframes, perception):
         target_joints = {}
+
         # YOUR CODE HERE
+        names = keyframes[0]
+        times = keyframes[1]
+        keys = keyframes[2]
+        time = self.perception.time - self.starting_time
+
+
+
+        #find key with fitting time
+        for i in range(len(names)):
+                for j in range(len(times[i])):
+                    if time < times[i][j]:
+                        time_fracture = time/times[i][j]
+                        target_joints[names[i]] = AngleInterpolationAgent.interpolate(self, time_fracture, i, j, keys)
+                        break
+                    else:
+                        if j == len(times[i])-1:
+                            if names[i] in perception.joint:
+                                target_joints[names[i]] = self.perception.joint[names[i]]
+                            else:
+                                break
 
         return target_joints
+
+    def interpolate(self, time_fracture, index_i, index_j, keys):
+
+        x_0 = keys[index_i][index_j][0]
+        x_1 = keys[index_i][index_j][1][2] + x_0
+        x_2 = keys[index_i][0][0]
+        x_3 = keys[index_i][index_j][2][2] + x_2
+
+
+        y_0 = (1 - time_fracture)**3
+        y_1 = 3 * (1 - time_fracture)**2
+        y_2 = 3 * (1 - time_fracture)
+
+        bezier = (y_0 * x_0) + (y_1 * x_1 * time_fracture) + (y_2 * x_3 * (time_fracture**2)) + (x_2 * (time_fracture**3))
+
+        return bezier
+
 
 if __name__ == '__main__':
     agent = AngleInterpolationAgent()
