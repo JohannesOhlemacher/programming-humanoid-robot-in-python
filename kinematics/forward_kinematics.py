@@ -59,7 +59,6 @@ class ForwardKinematicsAgent(AngleInterpolationAgent):
         # YOUR CODE HERE
         j_cos = cos(joint_angle)
         j_sin = sin(joint_angle)
-        print("hi", joint_name)
 
         Mx = [[      1,      0,      0,      0],
               [      0,  j_cos, -j_sin,      0],
