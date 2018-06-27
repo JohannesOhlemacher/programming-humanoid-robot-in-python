@@ -273,5 +273,7 @@ class SparkAgent(object):
 
 
 if '__main__' == __name__:
+    ball = VISION_PERCEPTOR_BALL
+
     agent = SparkAgent()
     agent.run()

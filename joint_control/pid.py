@@ -31,12 +31,13 @@ class PIDController(object):
         '''
         self.dt = dt
         self.u = np.zeros(size)
+        self.e = np.zeros(size)
         self.e1 = np.zeros(size)
         self.e2 = np.zeros(size)
         # ADJUST PARAMETERS BELOW
         delay = 0
-        self.Kp = 0
-        self.Ki = 0
+        self.Kp = 15
+        self.Ki = 0.30
         self.Kd = 0
         self.y = deque(np.zeros(size), maxlen=delay + 1)
 
@@ -55,11 +56,18 @@ class PIDController(object):
         # YOUR CODE HERE
 
         self.y.popleft()
-        p = (self.Kp + self.Ki*self.dt + self.Kd/self.dt)*(target-sensor)
-        i = (self.Kp + 2*(self.Kd/self.dt))*self.e1
+
+
+        self.e = target - sensor
+
+        p = (self.Kp + self.Ki*self.dt + self.Kd/self.dt)*self.e
+        i = (self.Kp + (2*self.Kd)/self.dt)*self.e1
         d = (self.Kd/self.dt)*(target - sensor)*self.e2
         self.u += p - i + d
 
+
+        self.e2 = self.e1
+        self.e1 = self.e
         self.y.append(d)
 
         return self.u
