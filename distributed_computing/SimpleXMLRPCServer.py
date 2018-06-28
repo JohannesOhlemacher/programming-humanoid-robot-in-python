@@ -657,4 +657,4 @@ if __name__ == '__main__':
     server.register_function(pow)
     server.register_function(lambda x,y: x+y, 'add')
     server.register_multicall_functions()
-server.serve_forever()
+    server.serve_forever()
